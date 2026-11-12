@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 72 72" role="img" aria-label="Circular teal logo">
+  <circle cx="36" cy="36" r="36" fill="#009393"/>
+  <path d="M21 20H51L60 34 36 58 12 34Z" fill="#fff"/>
+  <g fill="#009393">
+    <path d="M26 24H46V28H39V36H33V28H26ZM33 39H39V48H33Z"/>
+    <path fill-rule="evenodd" d="M48 36a12 4 0 1 1-24 0 12 4 0 1 1 24 0ZM47.3 36a11.3 2.4 0 1 0-22.6 0 11.3 2.4 0 1 0 22.6 0Z"/>
+  </g>
+</svg>

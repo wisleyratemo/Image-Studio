@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="320" viewBox="0 0 30 16" role="img" aria-label="White battery icon on black background">
+  <rect width="30" height="16" fill="#000"/>
+  <rect x="2" y="2" width="24" height="12" rx="4" fill="none" stroke="#606060" stroke-width="1.3"/>
+  <rect x="4" y="4" width="18" height="8" rx="2.2" fill="#fff"/>
+  <path d="M27 6h.5A1.5 1.5 0 0 1 29 7.5v1a1.5 1.5 0 0 1-1.5 1.5H27Z" fill="#707070"/>
+</svg>
