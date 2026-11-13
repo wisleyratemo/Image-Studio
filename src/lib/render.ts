@@ -243,12 +243,30 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 function drawCopyIcon(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.strokeStyle = C.muted;
   ctx.lineWidth = 1.6;
-  roundRect(ctx, x + 4, y - 7, 9, 9, 1.5);
+  roundRect(ctx, x, y - 7, 9, 9, 1.5);
   ctx.stroke();
-  roundRect(ctx, x, y - 3, 9, 9, 1.5);
+  roundRect(ctx, x + 4, y - 3, 9, 9, 1.5);
   ctx.fillStyle = C.bg;
   ctx.fill();
   ctx.stroke();
+}
+
+function drawInfoIcon(ctx: CanvasRenderingContext2D, x: number, y: number) {
+  ctx.save();
+  ctx.strokeStyle = C.muted;
+  ctx.fillStyle = C.muted;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(x, y, 5, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(x, y - 2, 0.6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y + 2.5);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function drawHeader(ctx: CanvasRenderingContext2D, d: MockupData) {
@@ -317,12 +335,12 @@ function drawStatusRow(ctx: CanvasRenderingContext2D, d: MockupData) {
   ctx.fillRect(0, 272, WIDTH, 1);
 }
 
-type Row = { label: string; value: string; copy?: boolean };
+type Row = { label: string; value: string; copy?: boolean; info?: boolean };
 
 function drawRows(ctx: CanvasRenderingContext2D, d: MockupData) {
   const rows: Row[] = [
     { label: "Address", value: d.address, copy: true },
-    { label: "Price", value: d.price },
+    { label: "Price", value: d.price, info: true },
     { label: "Network", value: d.network },
     { label: "Network fee", value: d.networkFee },
     { label: "Transaction ID", value: d.transactionId, copy: true },
@@ -339,6 +357,9 @@ function drawRows(ctx: CanvasRenderingContext2D, d: MockupData) {
     ctx.fillStyle = C.text;
     ctx.font = font(16, 400);
     ctx.fillText(row.label, 22, y);
+    if (row.info) {
+      drawInfoIcon(ctx, 22 + ctx.measureText(row.label).width + 10, y);
+    }
 
     ctx.font = font(15, 400);
     ctx.fillStyle = C.muted;
