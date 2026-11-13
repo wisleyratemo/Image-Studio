@@ -53,7 +53,7 @@ const C = {
   muted: "#9aa3ad",
   divider: "#1b1f27",
   green: "#45d3a6",
-  accent: "#caff63",
+  accent: "#BBFF30",
   icon: "#5b6cff",
 };
 
