@@ -75,9 +75,28 @@ const GREEN_TICK = typeof window !== "undefined" ? (() => {
   return img;
 })() : null;
 
+const STATUS_ICON_VARIANTS = [
+  "/wifi-battery-010-percent.svg",
+  "/wifi-battery-020-percent.svg",
+  "/wifi-battery-030-percent.svg",
+  "/wifi-battery-040-percent.svg",
+  "/wifi-battery-050-percent.svg",
+  "/wifi-battery-060-percent.svg",
+  "/wifi-battery-070-percent.svg",
+  "/wifi-battery-080-percent.svg",
+  "/wifi-battery-090-percent.svg",
+  "/wifi-battery-100-percent.svg",
+];
+
 const STATUS_ICONS = typeof window !== "undefined" ? (() => {
+  const storageKey = "image-studio-status-icon";
+  const previous = window.sessionStorage.getItem(storageKey);
+  const choices = STATUS_ICON_VARIANTS.filter((src) => src !== previous);
+  const selected = choices[Math.floor(Math.random() * choices.length)];
+  window.sessionStorage.setItem(storageKey, selected);
+
   const img = new Image();
-  img.src = "/wifi-and-battery.svg";
+  img.src = selected;
   return img;
 })() : null;
 
@@ -241,14 +260,15 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 }
 
 function drawCopyIcon(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  ctx.strokeStyle = C.muted;
-  ctx.lineWidth = 1.6;
-  roundRect(ctx, x, y - 7, 9, 9, 1.5);
-  ctx.stroke();
-  roundRect(ctx, x + 4, y - 3, 9, 9, 1.5);
-  ctx.fillStyle = C.bg;
-  ctx.fill();
-  ctx.stroke();
+  const icon = new Path2D(
+    "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z",
+  );
+  ctx.save();
+  ctx.translate(x, y - 9);
+  ctx.scale(18 / 24, 18 / 24);
+  ctx.fillStyle = C.muted;
+  ctx.fill(icon);
+  ctx.restore();
 }
 
 function drawInfoIcon(ctx: CanvasRenderingContext2D, x: number, y: number) {
@@ -364,16 +384,16 @@ function drawRows(ctx: CanvasRenderingContext2D, d: MockupData) {
     ctx.font = font(15, 400);
     ctx.fillStyle = C.muted;
     ctx.textAlign = "left";
-    const valueRight = row.copy ? right - 20 : right;
+    const valueRight = row.copy ? right - 22 : right;
     const lines = wrap(ctx, row.value, 200).slice(0, 3);
     ctx.textAlign = "right";
     lines.forEach((line, i) => {
       drawDollarValue(ctx, valueRight, y + i * lineHeight, line, C.muted);
     });
     ctx.textAlign = "left";
-    if (row.copy) drawCopyIcon(ctx, right - 13, y + ((lines.length - 1) * lineHeight) / 2);
+    if (row.copy) drawCopyIcon(ctx, right - 18, y + ((lines.length - 1) * lineHeight) / 2);
 
-    y += 46 + (lines.length - 1) * lineHeight;
+    y += 40 + (lines.length - 1) * lineHeight;
   }
 }
 

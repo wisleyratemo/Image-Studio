@@ -21,9 +21,52 @@ const FIELDS: { key: keyof MockupData; label: string }[] = [
   { key: "helpLink", label: "Help link text" },
 ];
 
+const BASE58_CHARACTERS = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+const BASE58_UPPERCASE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+const HEX_CHARACTERS = "0123456789abcdef";
+
+function createMockAddress() {
+  const address = [
+    "T",
+    BASE58_UPPERCASE.charAt(Math.floor(Math.random() * BASE58_UPPERCASE.length)),
+  ];
+
+  while (address.length < SAMPLE_DATA.address.length) {
+    address.push(BASE58_CHARACTERS.charAt(Math.floor(Math.random() * BASE58_CHARACTERS.length)));
+  }
+
+  return address.join("");
+}
+
+function createRandomCharacters(characters: string, length: number) {
+  return Array.from({ length }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join("");
+}
+
+function createMockTransactionId() {
+  return `${createRandomCharacters(HEX_CHARACTERS, 5)}...${createRandomCharacters(HEX_CHARACTERS, 4)}`;
+}
+
+function createMockReferenceNumber() {
+  return String(Math.floor(100_000_000 + Math.random() * 900_000_000));
+}
+
 export default function Generator() {
   const [data, setData] = useState<MockupData>(SAMPLE_DATA);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const resetDataRef = useRef<MockupData>(SAMPLE_DATA);
+
+  // Generate after hydration so the server and first client render stay in sync.
+  useEffect(() => {
+    const initialData = {
+      ...SAMPLE_DATA,
+      address: createMockAddress(),
+      transactionId: createMockTransactionId(),
+      referenceNo: createMockReferenceNumber(),
+    };
+    resetDataRef.current = initialData;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setData(initialData);
+  }, []);
 
   useEffect(() => {
     if (canvasRef.current) renderMockup(canvasRef.current, data);
@@ -73,7 +116,7 @@ export default function Generator() {
           </button>
           <button
             type="button"
-            onClick={() => setData(SAMPLE_DATA)}
+            onClick={() => setData(resetDataRef.current)}
             className="rounded-md border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700"
           >
             Reset
