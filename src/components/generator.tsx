@@ -50,6 +50,12 @@ function createMockReferenceNumber() {
   return String(Math.floor(100_000_000 + Math.random() * 900_000_000));
 }
 
+function createMockClockTime() {
+  const hours = String(Math.floor(Math.random() * 24)).padStart(2, "0");
+  const minutes = String(Math.floor(Math.random() * 60)).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
 export default function Generator() {
   const [data, setData] = useState<MockupData>(SAMPLE_DATA);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -62,6 +68,7 @@ export default function Generator() {
       address: createMockAddress(),
       transactionId: createMockTransactionId(),
       referenceNo: createMockReferenceNumber(),
+      clockTime: createMockClockTime(),
     };
     resetDataRef.current = initialData;
     // eslint-disable-next-line react-hooks/set-state-in-effect
