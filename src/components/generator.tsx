@@ -50,10 +50,25 @@ function createMockReferenceNumber() {
   return String(Math.floor(100_000_000 + Math.random() * 900_000_000));
 }
 
-function createMockClockTime() {
-  const hours = String(Math.floor(Math.random() * 24)).padStart(2, "0");
-  const minutes = String(Math.floor(Math.random() * 60)).padStart(2, "0");
-  return `${hours}:${minutes}`;
+function formatSubmittedTime(date: Date) {
+  const datePart = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const timePart = date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  return `${datePart} ${timePart}`;
+}
+
+function formatClockTime(date: Date) {
+  return date.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 }
 
 export default function Generator() {
@@ -63,12 +78,14 @@ export default function Generator() {
 
   // Generate after hydration so the server and first client render stay in sync.
   useEffect(() => {
+    const now = new Date();
     const initialData = {
       ...SAMPLE_DATA,
       address: createMockAddress(),
       transactionId: createMockTransactionId(),
       referenceNo: createMockReferenceNumber(),
-      clockTime: createMockClockTime(),
+      submittedTime: formatSubmittedTime(new Date(now.getTime() - 3 * 60_000)),
+      clockTime: formatClockTime(now),
     };
     resetDataRef.current = initialData;
     // eslint-disable-next-line react-hooks/set-state-in-effect
