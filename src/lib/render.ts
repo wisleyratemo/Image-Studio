@@ -76,23 +76,16 @@ const GREEN_TICK = typeof window !== "undefined" ? (() => {
 })() : null;
 
 const STATUS_ICON_VARIANTS = [
-  "/wifi-battery-010-percent.svg",
-  "/wifi-battery-020-percent.svg",
-  "/wifi-battery-030-percent.svg",
-  "/wifi-battery-040-percent.svg",
-  "/wifi-battery-050-percent.svg",
-  "/wifi-battery-060-percent.svg",
-  "/wifi-battery-070-percent.svg",
-  "/wifi-battery-080-percent.svg",
-  "/wifi-battery-090-percent.svg",
-  "/wifi-battery-100-percent.svg",
-];
+  ...Array.from({ length: 10 }, (_, index) => 100 - index),
+  ...Array.from({ length: 10 }, (_, index) => 90 - index),
+  ...Array.from({ length: 10 }, (_, index) => 50 - index),
+].map((percent) => `/wifi-battery-${String(percent).padStart(3, "0")}-percent.svg`);
 
 const STATUS_ICONS = typeof window !== "undefined" ? (() => {
   const storageKey = "image-studio-status-icon";
   const previous = window.sessionStorage.getItem(storageKey);
-  const choices = STATUS_ICON_VARIANTS.filter((src) => src !== previous);
-  const selected = choices[Math.floor(Math.random() * choices.length)];
+  const previousIndex = STATUS_ICON_VARIANTS.indexOf(previous ?? "");
+  const selected = STATUS_ICON_VARIANTS[(previousIndex + 1) % STATUS_ICON_VARIANTS.length];
   window.sessionStorage.setItem(storageKey, selected);
 
   const img = new Image();
