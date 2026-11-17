@@ -43,7 +43,7 @@ function createRandomCharacters(characters: string, length: number) {
 }
 
 function createMockTransactionId() {
-  return `${createRandomCharacters(HEX_CHARACTERS, 5)}...${createRandomCharacters(HEX_CHARACTERS, 4)}`;
+  return `${createRandomCharacters(HEX_CHARACTERS, 5)}...${createRandomCharacters(HEX_CHARACTERS, 5)}`;
 }
 
 function createMockReferenceNumber() {
