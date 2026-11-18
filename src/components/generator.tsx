@@ -7,7 +7,6 @@ const FIELDS: { key: keyof MockupData; label: string }[] = [
   { key: "action", label: "Action (e.g. Withdrawn, Received)" },
   { key: "amount", label: "Amount" },
   { key: "token", label: "Token symbol" },
-  { key: "fiatApprox", label: "Approx. value line" },
   { key: "status", label: "Status" },
   { key: "address", label: "Address" },
   { key: "price", label: "Price" },
@@ -24,6 +23,11 @@ const FIELDS: { key: keyof MockupData; label: string }[] = [
 const BASE58_CHARACTERS = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const BASE58_UPPERCASE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 const HEX_CHARACTERS = "0123456789abcdef";
+
+function createMockAmount() {
+  const amount = Math.floor(8_000 + Math.random() * (31_000 - 8_000 + 1));
+  return amount.toLocaleString("en-US");
+}
 
 function createMockAddress() {
   const address = [
@@ -81,6 +85,7 @@ export default function Generator() {
     const now = new Date();
     const initialData = {
       ...SAMPLE_DATA,
+      amount: createMockAmount(),
       address: createMockAddress(),
       transactionId: createMockTransactionId(),
       referenceNo: createMockReferenceNumber(),

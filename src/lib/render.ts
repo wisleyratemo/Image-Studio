@@ -8,7 +8,6 @@ export type MockupData = {
   action: string; // e.g. "Withdrawn"
   amount: string;
   token: string;
-  fiatApprox: string;
   status: string;
   address: string;
   price: string;
@@ -26,7 +25,6 @@ export const SAMPLE_DATA: MockupData = {
   action: "Withdrawn",
   amount: "8,819",
   token: "USDT",
-  fiatApprox: "~$8,807.44",
   status: "Completed",
   address: "TV2nyNjW5i1AffjscW9F9UPcKQT4DTuwJ",
   price: "$0.99/USDT",
@@ -100,6 +98,7 @@ const DOLLAR_ICON = typeof window !== "undefined" ? (() => {
 })() : null;
 
 const ASSET_IMAGES = [TETHER_ICON, CIRCULAR_LOGO, GREEN_TICK, STATUS_ICONS, DOLLAR_ICON].filter((i): i is HTMLImageElement => !!i);
+const latestRenderData = new WeakMap<HTMLCanvasElement, MockupData>();
 
 function drawTokenBadge(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
   const cx = x + size / 2;
@@ -308,7 +307,17 @@ function drawHeader(ctx: CanvasRenderingContext2D, d: MockupData) {
 
   ctx.fillStyle = "#9aa3ad";
   ctx.font = font(14, 400);
-  drawDollarValue(ctx, WIDTH / 2, 188, d.fiatApprox, "#9aa3ad");
+  drawDollarValue(ctx, WIDTH / 2, 188, formatApproxValue(d.amount), "#9aa3ad");
+}
+
+function formatApproxValue(amount: string) {
+  const numericAmount = Number(amount.replaceAll(",", "").trim());
+  if (!amount.trim() || !Number.isFinite(numericAmount)) return "~$—";
+
+  return `~${new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(numericAmount - 0.121)}`;
 }
 
 function drawStatusRow(ctx: CanvasRenderingContext2D, d: MockupData) {
@@ -426,6 +435,7 @@ function drawWatermark(ctx: CanvasRenderingContext2D) {
 }
 
 export function renderMockup(canvas: HTMLCanvasElement, data: MockupData) {
+  latestRenderData.set(canvas, data);
   canvas.width = WIDTH * SCALE;
   canvas.height = HEIGHT * SCALE;
   const ctx = canvas.getContext("2d");
@@ -433,9 +443,13 @@ export function renderMockup(canvas: HTMLCanvasElement, data: MockupData) {
 
   const pending = ASSET_IMAGES.filter((img) => !img.complete);
   if (pending.length > 0) {
+    const rerender = () => {
+      const latestData = latestRenderData.get(canvas);
+      if (latestData) renderMockup(canvas, latestData);
+    };
     pending.forEach((img) => {
-      img.onload = () => renderMockup(canvas, data);
-      img.onerror = () => renderMockup(canvas, data);
+      img.onload = rerender;
+      img.onerror = rerender;
     });
     return;
   }
@@ -449,5 +463,5 @@ export function renderMockup(canvas: HTMLCanvasElement, data: MockupData) {
   drawStatusRow(ctx, data);
   drawRows(ctx, data);
   drawFooter(ctx, data);
- // drawWatermark(ctx);
+  //drawWatermark(ctx);
 }
