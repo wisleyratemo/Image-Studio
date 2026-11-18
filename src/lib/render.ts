@@ -317,7 +317,7 @@ function formatApproxValue(amount: string) {
   return `~${new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-  }).format(numericAmount - 0.121)}`;
+  }).format(numericAmount - (numericAmount * 0.121 / 100))}`;
 }
 
 function drawStatusRow(ctx: CanvasRenderingContext2D, d: MockupData) {
